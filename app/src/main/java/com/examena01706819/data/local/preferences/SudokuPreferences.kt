@@ -52,6 +52,6 @@ class SudokuPreferences
         }
 
         fun clearCache() {
-            prefs.edit().clear().apply()
+            prefs.edit().remove("sudoku_cache").apply()
         }
     }

@@ -1,5 +1,6 @@
 package com.examena01706819.presentation.screens.puzzle
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +52,7 @@ fun PuzzleView(
     onBackClick: () -> Unit,
     viewModel: PuzzleViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedCell by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     LaunchedEffect(dificulty) {
@@ -112,6 +115,31 @@ fun PuzzleView(
                             },
                             modifier = Modifier.padding(bottom = 32.dp),
                         )
+                        Button(
+                            onClick = {
+                                val isSuccess = viewModel.checkSolution()
+                                if (isSuccess) {
+                                    Toast.makeText(context, "¡Solucion Correcta!", Toast.LENGTH_LONG).show()
+                                } else {
+                                    Toast.makeText(context, "Hay errores o está incompleto. Vuelve a Intentarlo", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("Revisar")
+                        }
+                        Button(
+                            onClick = { viewModel.resetGame() },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("ReIniciar")
+                        }
+                        Button(
+                            onClick = { viewModel.loadNewGame(dificulty) },
+                            modifier = Modifier.padding(8.dp),
+                        ) {
+                            Text("Nuevo Juego")
+                        }
                     }
                 }
             }
@@ -217,7 +245,6 @@ fun NumberPad(
             (6..9).forEach { num ->
                 NumberButton(number = num, onClick = { onNumberClick(num) }, modifier = Modifier.weight(1f))
             }
-            // Botón de borrar (X o 0)
             Button(
                 onClick = onClearClick,
                 modifier = Modifier.weight(1f),
