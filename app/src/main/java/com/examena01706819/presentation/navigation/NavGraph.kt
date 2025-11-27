@@ -52,7 +52,7 @@ fun SudokuNavGraph(
             route = Screen.Puzzle.route,
             arguments = listOf(navArgument("dificulty") { type = NavType.StringType }),
         ) { backStackEntry ->
-            val dif = backStackEntry.arguments?.getString("dif") ?: "easy"
+            val dif = backStackEntry.arguments?.getString("dificulty") ?: "medium"
             PuzzleView(
                 dificulty = dif,
                 onBackClick = { navController.popBackStack() },

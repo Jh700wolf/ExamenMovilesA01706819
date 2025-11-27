@@ -18,7 +18,8 @@ class SudokuRepositoryImpl
         override suspend fun getSudokuPuzzle(dif: String): Sudoku {
             // Intentar obtener del caché primero
             preferences.getSudokuCache()?.let { cache ->
-                if (preferences.isCacheValid()) {
+                val cachedDifficulty = cache.sudoku.difficulty
+                if (preferences.isCacheValid() && cachedDifficulty == dif) {
                     return cache.sudoku
                 }
             }
@@ -26,7 +27,7 @@ class SudokuRepositoryImpl
             return try {
                 // Si no hay caché o expiró, obtener de la API
                 val response = api.getSudoku(difficulty = dif)
-                val savedSudoku = response.toDomain()
+                val savedSudoku = response.toDomain(difficultySelected = dif)
                 preferences.saveSudoku(
                     sudoku = savedSudoku,
                 )
@@ -37,5 +38,9 @@ class SudokuRepositoryImpl
                     return cache.sudoku
                 } ?: throw e
             }
+        }
+
+        override suspend fun clearCache() {
+            preferences.clearCache()
         }
     }

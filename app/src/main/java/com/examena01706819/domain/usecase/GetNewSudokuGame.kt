@@ -7,23 +7,14 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class GetSudokuUsecase
+class GetNewSudokuGame
     @Inject
     constructor(
         // Inyectado por Hilt
         private val repository: SudokuRepository,
     ) {
         // Puede ser llamado como useCase()
-        operator fun invoke(dif: String): Flow<Result<Sudoku>> =
-            flow {
-                try {
-                    emit(Result.Loading)
-
-                    val sudokuPuzzle = repository.getSudokuPuzzle(dif)
-
-                    emit(Result.Success(sudokuPuzzle))
-                } catch (e: Exception) {
-                    emit(Result.Error(e))
-                }
-            }
+        suspend operator fun invoke() {
+            repository.clearCache()
+        }
     }
